@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from datetime import datetime, timezone
+import json
 import threading, time
 
 from kafka import KafkaAdminClient, KafkaConsumer, KafkaProducer
@@ -17,12 +19,17 @@ class Producer(threading.Thread):
         producer = KafkaProducer(bootstrap_servers='localhost:9092')
 
         while not self.stop_event.is_set():
+            curdate = datetime.now().replace(tzinfo=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+            vin_time = "testvin" + curdate
+            sample_data = {"H11108": "5.000000", "H22040": "0.28", "cangen": "H2G2C", "ignitiontime": curdate,
+                           "vin_time": vin_time}
 
-            a = {}
+            # a = {"H11108":"5.000000", "H22040": "0.28", "cangen":"H2G2C", "ignitiontime":"20211206152435", "vin_time":"testvin_20211206152435"}
 
-            a = {"H11108":"5.000000", "H22040": "0.28", "cangen":"H2G2C", "ignitiontime":"20211206152435", "vin_time":"testvin_20211206152435"}
-            producer.send('my-topic', b"test")
-            producer.send('my-topic', b"Hola, mundo!")
+            message = json.dumps(sample_data).encode('utf-8')
+            print(message)
+
+            producer.send('my-topic', message)
             time.sleep(1)
 
         producer.close()
