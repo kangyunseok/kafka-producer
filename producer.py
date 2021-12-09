@@ -37,6 +37,7 @@ class Producer(threading.Thread):
 
 def main():
     # Create 'my-topic' Kafka topic
+    """
     try:
         admin = KafkaAdminClient(bootstrap_servers='localhost:9092')
 
@@ -46,6 +47,7 @@ def main():
         admin.create_topics([topic])
     except Exception:
         pass
+    """
 
     tasks = [
         Producer(),
